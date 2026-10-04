@@ -1,0 +1,5 @@
+# dsh-translate-tab bundle patch: mounts the plugin when installed with
+#   dsh plugin --profile <name> add "link:<path>"
+- insert:
+    - id: translate-tab
+      name: 'dsh-translate-tab'

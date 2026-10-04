@@ -29,8 +29,27 @@
     "cordis.patch.yml",
     "README.md"
   ],
+  "engines": {
+    "node": ">=22.18"
+  },
   "license": "MIT",
   "scripts": {
-    "check": "node --check lib/client.js && node --check lib/index.js"
+    "build": "node scripts/build.ts",
+    "dev": "node scripts/build.ts --watch",
+    "typecheck": "tsc",
+    "lint": "gts lint",
+    "fix": "gts fix && prettier --write \"**/*.{css,json}\"",
+    "test": "vitest run",
+    "check": "tsc && gts lint && vitest run && node scripts/build.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.1",
+    "@types/react": "^19.3.0",
+    "clsx": "^2.1.1",
+    "esbuild": "^0.28.2",
+    "gts": "^7.0.0",
+    "prettier": "^3.9.9",
+    "typescript": "~5.9",
+    "vitest": "^5.0.3"
   }
 }

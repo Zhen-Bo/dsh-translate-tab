@@ -37,19 +37,23 @@ async function* readLines(body: ReadableStream<Uint8Array>) {
   const reader = body.getReader();
   const decoder = new TextDecoder();
   let pending = '';
-  for (;;) {
-    const {value, done} = await reader.read();
-    if (done) {
-      break;
+  try {
+    for (;;) {
+      const {value, done} = await reader.read();
+      if (done) {
+        break;
+      }
+      pending += decoder.decode(value, {stream: true});
+      let lineEnd;
+      while ((lineEnd = pending.indexOf('\n')) >= 0) {
+        yield pending.slice(0, lineEnd);
+        pending = pending.slice(lineEnd + 1);
+      }
     }
-    pending += decoder.decode(value, {stream: true});
-    let lineEnd;
-    while ((lineEnd = pending.indexOf('\n')) >= 0) {
-      yield pending.slice(0, lineEnd);
-      pending = pending.slice(lineEnd + 1);
-    }
+    yield pending + decoder.decode();
+  } finally {
+    reader.cancel().catch(() => {});
   }
-  yield pending;
 }
 
 /** Resolves when the stream finishes or is aborted. */

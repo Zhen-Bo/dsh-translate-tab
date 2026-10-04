@@ -1,0 +1,132 @@
+<div align="center">
+
+# 🌐 dsh-translate-tab
+
+**DeepSeek Harness 的翻譯插件。**
+
+[![版本 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](../package.json) [![MIT 授權](https://img.shields.io/badge/license-MIT-green)](../LICENSE) [![DeepSeek Harness 插件](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-安裝) [![支援 15 種語言](https://img.shields.io/badge/languages-15-orange)](#語言) [![不需要建置步驟](https://img.shields.io/badge/build_step-none-lightgrey)](#-架構)
+
+[安裝](#-安裝) · [快速開始](#-快速開始) · [使用說明](#-使用說明) · [疑難排解](#-疑難排解)
+
+[English](../README.md) | 繁體中文
+
+</div>
+
+![DeepSeek Harness 的翻譯頁面。左側為自動偵測的英文原文，右側為繁體中文譯文。](screenshot-dark.png)
+
+## ✨ 功能
+
+- **側邊欄整合**：在「插件」下新增「翻譯」入口，於主區域開啟雙欄翻譯介面。
+- **共用模型清單**：使用與 Harness 對話相同的供應商與模型，可調整思考強度。
+- **低延遲預設**：預設採用清單中的預設模型，並關閉思考。
+- **15 種語言**：支援自動偵測來源語言。
+- **可自訂提示詞**：支援 `{{target_language}}`、`{{source_language}}`、`{{text}}` 變數。
+- **介面在地化**：跟隨 Harness 語言設定，提供英文、簡體中文與繁體中文介面。
+
+## 📋 需求
+
+- DeepSeek Harness 桌面版，且 `dsh` CLI 已加入 `PATH`
+- 「設定 › 模型」中至少有一個已設定有效 API 金鑰的模型
+
+## 📦 安裝
+
+1. Clone 此儲存庫。
+2. 註冊到 desktop profile，路徑為插件目錄：
+
+   ```bash
+   dsh plugin --profile desktop add "link:D:/path/to/dsh-translate-tab"
+   ```
+
+3. 重新啟動 DeepSeek Harness。
+
+## 🚀 快速開始
+
+1. 在側邊欄開啟「**插件 › 翻譯**」。
+2. 在左欄輸入原文。
+3. 按 <kbd>Ctrl</kbd> + <kbd>Enter</kbd>，macOS 為 <kbd>⌘</kbd> + <kbd>Enter</kbd>。
+
+譯文以串流方式輸出至右欄。
+
+## 🧭 使用說明
+
+### 語言
+
+繁體中文、简体中文、English、日本語、한국어、Français、Deutsch、Español、Português、Italiano、Русский、Tiếng Việt、ไทย、Bahasa Indonesia、العربية，皆可作為來源或目標語言。
+
+自動偵測適用於來源語言，可辨識日文、韓文、阿拉伯文、泰文、俄文、簡體中文、繁體中文與英文。
+
+### 模型與思考強度
+
+模型選單位於右上角，思考強度由模型清單下方的滑桿設定。
+
+### 翻譯提示詞
+
+提示詞編輯器由模型選單旁的按鈕開啟。提示詞以使用者訊息送出，並替換以下變數：
+
+| 變數 | 值 |
+|---|---|
+| `{{target_language}}` | 目標語言的英文名稱，例如 `Japanese` |
+| `{{source_language}}` | 來源語言名稱，或 `the detected source language` |
+| `{{text}}` | 原文。提示詞未包含此變數時，原文附加於結尾 |
+
+### 資料儲存
+
+| 資料 | 位置 | 保存期間 |
+|---|---|---|
+| 語言、模型、思考強度與自訂提示詞 | `localStorage` 的 `dsh-translate-tab:v1` | 持續保存 |
+| 原文草稿 | `sessionStorage` 的 `dsh-translate-tab:draft` | 目前視窗工作階段 |
+
+## 🔧 疑難排解
+
+| 訊息 | 處理方式 |
+|---|---|
+| 這個模型還沒有設定 API 金鑰 | 在「設定 › 模型」加入金鑰，或改選其他模型 |
+| 金鑰無效或沒有權限 | 在「設定 › 模型」確認金鑰 |
+| 請求太頻繁 | 稍候再重試 |
+| 回應中途斷掉了 | 重新執行翻譯 |
+| 文字太長 | 將原文分段，每段少於 100,000 字元 |
+
+若「插件」下未出現「翻譯」，請確認安裝路徑並重新啟動 DeepSeek Harness。
+
+## 🧹 解除安裝
+
+```bash
+dsh plugin --profile desktop remove dsh-translate-tab
+```
+
+完成後重新啟動 DeepSeek Harness。
+
+## 🧩 架構
+
+| 檔案 | 執行環境 | 用途 |
+|---|---|---|
+| `lib/client.js` | Harness 視窗 | 翻譯頁面，以 Harness 用戶端模組格式手寫 |
+| `lib/index.js` | Harness 主程式 | `POST /translate/api/stream`，串流單次模型呼叫 |
+
+<details>
+<summary>串流格式</summary>
+
+<br>
+
+此路由接受來自 Harness 視窗的同源請求，回應格式為逐行 JSON：
+
+```text
+{"t":"text","v":"..."}        譯文片段
+{"t":"done"}                  完成
+{"t":"aborted"}               已取消
+{"t":"error","message":"..."} 失敗
+```
+
+</details>
+
+## 💻 開發
+
+`lib/` 的修改需重新啟動 DeepSeek Harness 後生效。語法檢查：
+
+```bash
+npm run check
+```
+
+## 📄 授權
+
+採用 [MIT 授權條款](../LICENSE)。

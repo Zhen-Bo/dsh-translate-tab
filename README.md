@@ -4,7 +4,7 @@
 
 **A translation plugin for DeepSeek Harness.**
 
-[![Version 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](package.json) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DeepSeek Harness plugin](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-installation) [![15 languages](https://img.shields.io/badge/languages-15-orange)](#languages) [![No build step](https://img.shields.io/badge/build_step-none-lightgrey)](#-architecture)
+[![Version 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](package.json) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DeepSeek Harness plugin](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-installation) [![15 languages](https://img.shields.io/badge/languages-15-orange)](#languages) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](#-architecture) [![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/zhen-bo/dsh-translate-tab)
 
 [Installation](#-installation) · [Quick start](#-quick-start) · [Usage](#-usage) · [Troubleshooting](#-troubleshooting)
 
@@ -30,14 +30,26 @@ English | [繁體中文](docs/README.zh-TW.md)
 
 ## 📦 Installation
 
-1. Clone this repository.
-2. Register it with the desktop profile, using the path to the plugin directory:
+### From DSH Plugin Hub
+
+1. Install DSH Plugin Hub:
 
    ```bash
-   dsh plugin --profile desktop add "link:D:/path/to/dsh-translate-tab"
+   dsh plugin --profile desktop add dsh-plugin
    ```
 
-3. Restart DeepSeek Harness.
+2. Restart DeepSeek Harness.
+3. Open **Settings › Plugin Market**, search for `dsh-translate-tab` and select **Install**.
+
+### From GitHub
+
+1. Install the plugin from the repository:
+
+   ```bash
+   dsh plugin --profile desktop add "github:Zhen-Bo/dsh-translate-tab"
+   ```
+
+2. Restart DeepSeek Harness.
 
 ## 🚀 Quick start
 
@@ -98,10 +110,13 @@ Restart DeepSeek Harness afterwards.
 
 ## 🧩 Architecture
 
-| File | Runtime | Role |
+| Path | Runtime | Role |
 |---|---|---|
-| `lib/client.js` | Harness window | Translate page, hand-written in the Harness client module format |
-| `lib/index.js` | Harness host | `POST /translate/api/stream`, streams a single model call |
+| `src/client` | Harness window | Translate page in React and TypeScript |
+| `src/server` | Harness host | `POST /translate/api/stream`, streams a single model call |
+| `src/shared` | Both | Route, text limits and stream event types |
+| `locale` | Harness window | Interface text, registered with the Harness locale service |
+| `lib` | Both | Build output loaded by Harness |
 
 <details>
 <summary>Stream format</summary>
@@ -121,11 +136,24 @@ The route accepts same-origin requests from the Harness window and responds with
 
 ## 💻 Development
 
-Changes in `lib/` take effect after restarting DeepSeek Harness. Syntax check:
+1. Install dependencies and link the working copy to the desktop profile:
 
-```bash
-npm run check
-```
+   ```bash
+   npm install
+   dsh plugin --profile desktop add "link:D:/path/to/dsh-translate-tab"
+   ```
+
+2. Run the build in watch mode, then restart DeepSeek Harness to load changes:
+
+   ```bash
+   npm run dev
+   ```
+
+| Command | Purpose |
+|---|---|
+| `npm run build` | Builds `lib/client.js` and `lib/index.js` |
+| `npm run check` | Runs the type check, lint, tests and build |
+| `npm run fix` | Formats the code with gts |
 
 ## 📄 License
 

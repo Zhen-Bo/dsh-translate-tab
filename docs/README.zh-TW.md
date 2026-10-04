@@ -4,7 +4,7 @@
 
 **DeepSeek Harness 的翻譯插件。**
 
-[![版本 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](../package.json) [![MIT 授權](https://img.shields.io/badge/license-MIT-green)](../LICENSE) [![DeepSeek Harness 插件](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-安裝) [![支援 15 種語言](https://img.shields.io/badge/languages-15-orange)](#語言) [![不需要建置步驟](https://img.shields.io/badge/build_step-none-lightgrey)](#-架構)
+[![版本 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](../package.json) [![MIT 授權](https://img.shields.io/badge/license-MIT-green)](../LICENSE) [![DeepSeek Harness 插件](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-安裝) [![支援 15 種語言](https://img.shields.io/badge/languages-15-orange)](#語言) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](#-架構) [![已收錄於 dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/zhen-bo/dsh-translate-tab)
 
 [安裝](#-安裝) · [快速開始](#-快速開始) · [使用說明](#-使用說明) · [疑難排解](#-疑難排解)
 
@@ -30,14 +30,26 @@
 
 ## 📦 安裝
 
-1. Clone 此儲存庫。
-2. 註冊到 desktop profile，路徑為插件目錄：
+### 從 DSH Plugin Hub 安裝
+
+1. 安裝 DSH Plugin Hub：
 
    ```bash
-   dsh plugin --profile desktop add "link:D:/path/to/dsh-translate-tab"
+   dsh plugin --profile desktop add dsh-plugin
    ```
 
-3. 重新啟動 DeepSeek Harness。
+2. 重新啟動 DeepSeek Harness。
+3. 開啟「**設定 › 插件市場**」，搜尋 `dsh-translate-tab` 並選擇「**安裝**」。
+
+### 從 GitHub 安裝
+
+1. 從儲存庫安裝插件：
+
+   ```bash
+   dsh plugin --profile desktop add "github:Zhen-Bo/dsh-translate-tab"
+   ```
+
+2. 重新啟動 DeepSeek Harness。
 
 ## 🚀 快速開始
 
@@ -98,10 +110,13 @@ dsh plugin --profile desktop remove dsh-translate-tab
 
 ## 🧩 架構
 
-| 檔案 | 執行環境 | 用途 |
+| 路徑 | 執行環境 | 用途 |
 |---|---|---|
-| `lib/client.js` | Harness 視窗 | 翻譯頁面，以 Harness 用戶端模組格式手寫 |
-| `lib/index.js` | Harness 主程式 | `POST /translate/api/stream`，串流單次模型呼叫 |
+| `src/client` | Harness 視窗 | 翻譯頁面，以 React 與 TypeScript 撰寫 |
+| `src/server` | Harness 主程式 | `POST /translate/api/stream`，串流單次模型呼叫 |
+| `src/shared` | 兩者 | 路由、文字長度上限與串流事件型別 |
+| `locale` | Harness 視窗 | 介面文字，註冊至 Harness 語系服務 |
+| `lib` | 兩者 | Harness 載入的建置產物 |
 
 <details>
 <summary>串流格式</summary>
@@ -121,11 +136,24 @@ dsh plugin --profile desktop remove dsh-translate-tab
 
 ## 💻 開發
 
-`lib/` 的修改需重新啟動 DeepSeek Harness 後生效。語法檢查：
+1. 安裝相依套件，並將工作目錄連結至 desktop profile：
 
-```bash
-npm run check
-```
+   ```bash
+   npm install
+   dsh plugin --profile desktop add "link:D:/path/to/dsh-translate-tab"
+   ```
+
+2. 以監看模式執行建置，重新啟動 DeepSeek Harness 後載入修改：
+
+   ```bash
+   npm run dev
+   ```
+
+| 指令 | 用途 |
+|---|---|
+| `npm run build` | 建置 `lib/client.js` 與 `lib/index.js` |
+| `npm run check` | 執行型別檢查、lint、測試與建置 |
+| `npm run fix` | 以 gts 格式化程式碼 |
 
 ## 📄 授權
 

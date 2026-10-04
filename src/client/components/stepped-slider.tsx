@@ -92,6 +92,7 @@ export function SteppedSlider({
           }
         }}
         onPointerUp={stopDragging}
+        onPointerCancel={stopDragging}
         onKeyDown={event => {
           if (!(event.key in STEPS_BY_KEY)) {
             return;

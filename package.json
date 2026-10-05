@@ -1,6 +1,6 @@
 {
   "name": "dsh-translate-tab",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "DeepSeek Harness plugin: a Translate entry under Plugins in the sidebar that swaps the main area for a two-pane translator with model, effort and prompt controls.",
   "keywords": [
     "deepseek-harness",

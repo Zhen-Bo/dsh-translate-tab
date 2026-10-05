@@ -58,7 +58,10 @@
     "lint": "gts lint",
     "fix": "gts fix && prettier --write \"**/*.{css,json}\"",
     "test": "vitest run",
-    "check": "tsc && gts lint && vitest run && node scripts/build.ts"
+    "check": "tsc && gts lint && vitest run && node scripts/build.ts",
+    "preversion": "npm run check",
+    "version": "node scripts/changelog.ts release && git add CHANGELOG.md",
+    "prepublishOnly": "npm run check"
   },
   "devDependencies": {
     "@types/node": "^24.19.1",

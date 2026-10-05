@@ -4,7 +4,7 @@
 
 **A translation plugin for DeepSeek Harness.**
 
-[![Version 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](package.json) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DeepSeek Harness plugin](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-installation) [![15 languages](https://img.shields.io/badge/languages-15-orange)](#languages) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](#-architecture) [![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/zhen-bo/dsh-translate-tab)
+[![npm version](https://img.shields.io/npm/v/dsh-translate-tab?color=4d6bfe)](https://www.npmjs.com/package/dsh-translate-tab) [![MIT License](https://img.shields.io/badge/license-MIT-green)](LICENSE) [![DeepSeek Harness plugin](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-installation) [![15 languages](https://img.shields.io/badge/languages-15-orange)](#languages) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](#-architecture) [![Listed on dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/zhen-bo/dsh-translate-tab)
 
 [Installation](#-installation) · [Quick start](#-quick-start) · [Usage](#-usage) · [Troubleshooting](#-troubleshooting)
 
@@ -40,6 +40,16 @@ English | [繁體中文](docs/README.zh-TW.md)
 
 2. Restart DeepSeek Harness.
 3. Open **Settings › Plugin Market**, search for `dsh-translate-tab` and select **Install**.
+
+### From npm
+
+1. Install the plugin from the npm registry:
+
+   ```bash
+   dsh plugin --profile desktop add dsh-translate-tab
+   ```
+
+2. Restart DeepSeek Harness.
 
 ### From GitHub
 

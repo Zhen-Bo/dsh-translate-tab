@@ -4,7 +4,7 @@
 
 **DeepSeek Harness 的翻譯插件。**
 
-[![版本 0.1.0](https://img.shields.io/badge/version-0.1.0-4d6bfe)](../package.json) [![MIT 授權](https://img.shields.io/badge/license-MIT-green)](../LICENSE) [![DeepSeek Harness 插件](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-安裝) [![支援 15 種語言](https://img.shields.io/badge/languages-15-orange)](#語言) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](#-架構) [![已收錄於 dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/zhen-bo/dsh-translate-tab)
+[![npm 版本](https://img.shields.io/npm/v/dsh-translate-tab?color=4d6bfe)](https://www.npmjs.com/package/dsh-translate-tab) [![MIT 授權](https://img.shields.io/badge/license-MIT-green)](../LICENSE) [![DeepSeek Harness 插件](https://img.shields.io/badge/DeepSeek_Harness-plugin-4d6bfe)](#-安裝) [![支援 15 種語言](https://img.shields.io/badge/languages-15-orange)](#語言) [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178c6)](#-架構) [![已收錄於 dsh-plugin.org](https://dsh-plugin.org/badges/listed.svg)](https://dsh-plugin.org/plugins/zhen-bo/dsh-translate-tab)
 
 [安裝](#-安裝) · [快速開始](#-快速開始) · [使用說明](#-使用說明) · [疑難排解](#-疑難排解)
 
@@ -40,6 +40,16 @@
 
 2. 重新啟動 DeepSeek Harness。
 3. 開啟「**設定 › 插件市場**」，搜尋 `dsh-translate-tab` 並選擇「**安裝**」。
+
+### 從 npm 安裝
+
+1. 從 npm 套件庫安裝插件：
+
+   ```bash
+   dsh plugin --profile desktop add dsh-translate-tab
+   ```
+
+2. 重新啟動 DeepSeek Harness。
 
 ### 從 GitHub 安裝
 

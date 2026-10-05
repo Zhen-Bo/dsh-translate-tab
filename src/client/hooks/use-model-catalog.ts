@@ -1,4 +1,4 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useEffect, useRef, useState} from 'react';
 
 import type {ClientContext} from '../host-context';
 import type {ModelCatalog} from '../model-selection';
@@ -17,11 +17,17 @@ const FAILED_CATALOG: ModelCatalog = {
 // Host services are proxies, so ctx.remote is a new object on every read.
 export function useModelCatalog(ctx: ClientContext) {
   const [catalog, setCatalog] = useState(LOADING_CATALOG);
+  const latestRequestId = useRef(0);
 
   const load = useCallback(async () => {
+    const requestId = ++latestRequestId.current;
+    const isLatest = () => requestId === latestRequestId.current;
     setCatalog(current => ({...current, status: 'loading'}));
     try {
       const response = await ctx.remote.session.modelCatalog();
+      if (!isLatest()) {
+        return;
+      }
       setCatalog(
         response.ok
           ? {
@@ -32,12 +38,17 @@ export function useModelCatalog(ctx: ClientContext) {
           : FAILED_CATALOG,
       );
     } catch {
-      setCatalog(FAILED_CATALOG);
+      if (isLatest()) {
+        setCatalog(FAILED_CATALOG);
+      }
     }
   }, [ctx]);
 
   useEffect(() => {
     void load();
+    return () => {
+      latestRequestId.current++;
+    };
   }, [load]);
 
   return [catalog, load] as const;

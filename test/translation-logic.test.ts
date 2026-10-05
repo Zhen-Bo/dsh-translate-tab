@@ -12,6 +12,7 @@ import {
   PROVIDER_DEFAULT_EFFORT,
   resolveModelSelection,
 } from '../src/client/model-selection';
+import {hideModels, readModelIds} from '../src/client/model-visibility';
 import {
   DEFAULT_PROMPT_TEMPLATE,
   fillPromptTemplate,
@@ -174,5 +175,34 @@ describe('i18n', () => {
 
   it('counts an emoji with a skin tone as one character', () => {
     expect(countCharacters('👍🏽a')).toBe(2);
+  });
+});
+
+describe('hideModels', () => {
+  const groups = [
+    {id: 'openai-codex', models: [{id: 'gpt-5'}, {id: 'gpt-5-mini'}]},
+    {id: 'deepseek', models: [{id: 'chat'}]},
+    {id: 'empty', models: []},
+  ];
+
+  it('hides listed models only in their own provider', () => {
+    const visible = hideModels(groups, {'openai-codex': ['gpt-5', 'chat']});
+    expect(visible.map(group => group.models.map(model => model.id))).toEqual([
+      ['gpt-5-mini'],
+      ['chat'],
+      [],
+    ]);
+  });
+
+  it('drops a provider once all its models are hidden', () => {
+    const visible = hideModels(groups, {
+      'openai-codex': ['gpt-5', 'gpt-5-mini'],
+    });
+    expect(visible.map(group => group.id)).toEqual(['deepseek', 'empty']);
+  });
+
+  it('reads only string ids from a stored list', () => {
+    expect(readModelIds(['a', 1, null, 'b'])).toEqual(['a', 'b']);
+    expect(readModelIds(undefined)).toEqual([]);
   });
 });

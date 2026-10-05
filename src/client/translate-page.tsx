@@ -3,7 +3,7 @@ import {
   Tooltip,
 } from '@deepseek-ai/dsh-client-ui-primitives';
 import clsx from 'clsx';
-import {useEffect, useRef, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 
 import {MAX_SOURCE_CHARS} from '../shared/stream-protocol';
 import {FailureToast} from './components/failure-toast';
@@ -16,6 +16,10 @@ import {SourcePane} from './components/source-pane';
 import {TranslateButton} from './components/translate-button';
 import type {ClientContext} from './host-context';
 import {useActiveLocale} from './hooks/use-active-locale';
+import {
+  useHiddenModelIds,
+  type BoundHiddenModelSource,
+} from './hooks/use-hidden-model-ids';
 import {useModelCatalog} from './hooks/use-model-catalog';
 import {useSettings} from './hooks/use-settings';
 import {useTranslator} from './hooks/use-translator';
@@ -28,18 +32,32 @@ import {
   translationLanguageForLocale,
 } from './languages';
 import {parseModelKey, resolveModelSelection} from './model-selection';
+import {hideModels} from './model-visibility';
 import {DEFAULT_PROMPT_TEMPLATE, fillPromptTemplate} from './prompt';
 import {draftKeptAcrossRemounts, saveDraft, type Settings} from './settings';
 
 interface TranslatePageProps {
   ctx: ClientContext;
   t: Translate;
+  hiddenModelSources: readonly BoundHiddenModelSource[];
 }
 
-export function TranslatePage({ctx, t}: TranslatePageProps) {
+export function TranslatePage({
+  ctx,
+  t,
+  hiddenModelSources,
+}: TranslatePageProps) {
   const uiLanguage = translationLanguageForLocale(useActiveLocale(ctx.locale));
   const [settings, updateSettings] = useSettings();
-  const [catalog, reloadCatalog] = useModelCatalog(ctx);
+  const [fullCatalog, reloadCatalog] = useModelCatalog(ctx);
+  const hiddenModelIds = useHiddenModelIds(hiddenModelSources);
+  const catalog = useMemo(
+    () => ({
+      ...fullCatalog,
+      groups: hideModels(fullCatalog.groups, hiddenModelIds),
+    }),
+    [fullCatalog, hiddenModelIds],
+  );
   const translator = useTranslator(draftKeptAcrossRemounts.result);
   const {result, busy, failure, clearFailure} = translator;
   const [source, setSource] = useState(draftKeptAcrossRemounts.source);

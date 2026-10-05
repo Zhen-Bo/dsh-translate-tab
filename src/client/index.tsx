@@ -2,6 +2,7 @@ import {TranslateIcon} from './components/icons';
 import type {ClientContext} from './host-context';
 import {PLUGIN_ID} from '../shared/plugin-id';
 import {createTranslate, MESSAGES} from './i18n';
+import {HIDDEN_MODEL_SOURCES} from './model-visibility';
 import styles from './styles.css';
 import {TranslatePage} from './translate-page';
 
@@ -17,6 +18,15 @@ function mountStyles() {
   return () => style.remove();
 }
 
+// DSH 0.1.7 replaced settingsScope with configForms.
+function pluginSettingsStore(ctx: ClientContext, configId: string) {
+  const configForms = ctx.get('configForms');
+  if (configForms) {
+    return configForms.get(configId);
+  }
+  return ctx.get('settingsScope')?.bind({namespace: configId});
+}
+
 export function apply(ctx: ClientContext) {
   ctx.effect(mountStyles, `${PLUGIN_ID}: styles`);
   ctx.effect(
@@ -25,7 +35,18 @@ export function apply(ctx: ClientContext) {
   );
   const t = createTranslate(ctx.locale.bind(PLUGIN_ID));
 
-  const Page = () => <TranslatePage ctx={ctx} t={t} />;
+  const connection = ctx.get('connection');
+  const hiddenModelSources = HIDDEN_MODEL_SOURCES.map(source => ({
+    ...source,
+    store: pluginSettingsStore(ctx, source.configId),
+    fetchStatus: () =>
+      connection?.rpc.call('/api', source.statusEndpoint, {}) ??
+      Promise.reject(new Error('host connection is unavailable')),
+  }));
+
+  const Page = () => (
+    <TranslatePage ctx={ctx} t={t} hiddenModelSources={hiddenModelSources} />
+  );
   ctx.slots.inject('main', function* () {
     yield ctx.slots.register({name: 'main', key: PANEL_ID}, Page);
   });

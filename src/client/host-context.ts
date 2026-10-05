@@ -30,8 +30,34 @@ interface SlotRegistration {
 }
 
 /** The parts of the host plugin context this plugin uses. */
+export interface SettingsStore {
+  getSnapshot(): {status: string; value?: Record<string, unknown>};
+  subscribe(listener: () => void): () => void;
+}
+
+export interface SettingsScope {
+  bind(options: {namespace: string}): SettingsStore;
+}
+
+export interface ConfigForms {
+  get(configId: string): SettingsStore | undefined;
+}
+
+export interface HostConnection {
+  rpc: {
+    call(
+      channel: string,
+      endpoint: string,
+      payload: object,
+    ): Promise<HostResult<Record<string, unknown>>>;
+  };
+}
+
 export interface ClientContext {
   effect(setup: () => () => void, label: string): void;
+  get(name: 'configForms'): ConfigForms | undefined;
+  get(name: 'connection'): HostConnection | undefined;
+  get(name: 'settingsScope'): SettingsScope | undefined;
   locale: HostLocale;
   remote: {
     session: {
